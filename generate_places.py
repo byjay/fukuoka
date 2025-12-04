@@ -1,18 +1,44 @@
 import json
 import random
 
+# Verified Image Pools (Static IDs)
+verified_pools = {
+    "food": [
+        "1580828343064-fde4fc206bc6", "1553621042-f6e147245754", "1594212699903-ec8a3eca50f5", 
+        "1569050467447-ce54b3bbc37d", "1618843479313-40f8afb4b4d8", "1552566626-52f8b828add9", 
+        "1563245372-f21724e3856d", "1519985176271-adb1088fa94c", "1534422298391-e4f8c172dddb", 
+        "1579871494447-9811cf80d66c", "1631515243349-e06036043944", "1504674900247-0877df9cc836", 
+        "1542359553-66256f68c871", "1595250963668-2329063d81b8", "1604626623468-2329063d81b8"
+    ],
+    "cafe": [
+        "1554118811-1e0d58224f24", "1495474472287-4d71bcdd2085", "1509042239860-f550ce710b93", 
+        "1521017432531-fbd92d768814", "1497935586351-b67a49e012bf", "1517248135467-4c7edcad34c4", 
+        "1559305616-3f99cd43e353", "1514432324607-a09d9b4aefdd", "1461023058943-07fcbe16d735", 
+        "1507133750069-bef72f3707a9"
+    ],
+    "shopping": [
+        "1607082348824-0a96f2a4b9da", "1528698827591-e19ccd7bc23d", "1555529669-e69e7aa0ba9a", 
+        "1483985988355-763728e1935b", "1519671482538-518b76064044", "1534452203293-494d7ddbf7e0", 
+        "1567401893414-76b7b1e5a7a5", "1441986300917-64674bd600d8", "1472851294608-4155f2118c03", 
+        "1479064555552-3ef4979f8908"
+    ],
+    "sightseeing": [
+        "1570176560374-27c720de30bf", "1493976040374-85c8e12f0c0e", "1528360983277-13d9b152c6d1", 
+        "1545569341-9eb8b30979d9", "1503899036084-c55cdd92da26", "1480796927426-f609979314bd", 
+        "1524413840807-0c3cb6fa808d", "1492571350019-22de08371fd3", "1478436127897-769e1b3f0f36", 
+        "1542051841857-5f90071e7989"
+    ]
+}
+
 # Helper to create a place object
 def create_place(id_suffix, area, type_str, name, rating, desc, menu_items, review_text, info, transport, map_url, image_keywords):
-    # Construct menu HTML (Simple list)
+    # Construct menu HTML
     menu_html = "<ul class='menu-list'>"
     for item, price in menu_items.items():
         menu_html += f"<li><span>{item}</span> <span>{price}</span></li>"
     menu_html += "</ul>"
 
     # Construct reviews HTML (Summary style)
-    # User requested: "Summarize ~100 reviews into 100 characters"
-    # We return a clean HTML block for the summary.
-    
     reviews_html = f"""
     <div class="review-summary-card">
         <div class="review-score">
@@ -25,11 +51,20 @@ def create_place(id_suffix, area, type_str, name, rating, desc, menu_items, revi
     </div>
     """
 
-    # Image keywords for Unsplash (Generic fallback, will be overwritten by build_index.js mostly)
+    # Assign Images from Verified Pools
+    pool_key = "food"
+    if "카페" in type_str: pool_key = "cafe"
+    elif "쇼핑" in type_str: pool_key = "shopping"
+    elif "관광" in type_str: pool_key = "sightseeing"
+    
+    pool = verified_pools[pool_key]
+    # Use id_suffix to deterministically pick images
+    start_idx = (id_suffix * 3) % len(pool)
+    
     images = []
-    keywords = ",".join(image_keywords)
-    for i in range(1, 6):
-        images.append(f"https://source.unsplash.com/400x300/?{keywords}&sig={id_suffix}{i}")
+    for i in range(5):
+        img_id = pool[(start_idx + i) % len(pool)]
+        images.append(f"https://images.unsplash.com/photo-{img_id}?w=500&q=80")
 
     return {
         "id": f"p{id_suffix}",
