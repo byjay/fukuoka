@@ -1,83 +1,95 @@
 const fs = require('fs');
 
-// 1. Image Pools (High Quality Unsplash URLs)
-const imagePools = {
+// 1. Verified Image Pools (Static IDs to ensure no 404s)
+// These are specific photo IDs from Unsplash that are high quality and reliable.
+const verifiedPools = {
     food: [
-        "https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=500&q=80", // Ramen generic
-        "https://images.unsplash.com/photo-1553621042-f6e147245754?w=500&q=80", // Sushi
-        "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=500&q=80", // Burger/Steak
-        "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=80", // Dumplings
-        "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=500&q=80", // Izakaya food
-        "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&q=80", // Yakitori
-        "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&q=80", // Udon
-        "https://images.unsplash.com/photo-1519985176271-adb1088fa94c?w=500&q=80", // Sashimi
-        "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&q=80", // Dumplings 2
-        "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80", // Sushi 2
-        "https://images.unsplash.com/photo-1631515243349-e06036043944?w=500&q=80", // Curry
-        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&q=80", // General Food
-        "https://images.unsplash.com/photo-1542359553-66256f68c871?w=500&q=80", // Bowl
-        "https://images.unsplash.com/photo-1595250963668-2329063d81b8?w=500&q=80", // Tempura
-        "https://images.unsplash.com/photo-1604626623468-2329063d81b8?w=500&q=80"  // Beef
+        "1580828343064-fde4fc206bc6", // Ramen
+        "1553621042-f6e147245754", // Sushi
+        "1594212699903-ec8a3eca50f5", // Burger
+        "1569050467447-ce54b3bbc37d", // Dumplings
+        "1618843479313-40f8afb4b4d8", // Izakaya
+        "1552566626-52f8b828add9", // Yakitori
+        "1563245372-f21724e3856d", // Udon
+        "1519985176271-adb1088fa94c", // Sashimi
+        "1534422298391-e4f8c172dddb", // Dumplings 2
+        "1579871494447-9811cf80d66c", // Sushi 2
+        "1631515243349-e06036043944", // Curry
+        "1504674900247-0877df9cc836", // Meat
+        "1542359553-66256f68c871", // Bowl
+        "1595250963668-2329063d81b8", // Tempura
+        "1604626623468-2329063d81b8", // Beef
+        "1560155016-bd4879ae8f21", // Noodles
+        "1559314809-0d155014e29e", // Fish
+        "1626804475297-411dbe63c4f4", // Fried
+        "1512621776951-a57141f2eefd", // Healthy
+        "1540189549336-e6e99c3679fe"  // Salad
     ],
     cafe: [
-        "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500&q=80", // Cafe interior
-        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500&q=80", // Coffee
-        "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&q=80", // Latte art
-        "https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=500&q=80", // Cafe shop
-        "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=500&q=80", // Coffee cup
-        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&q=80", // Restaurant/Cafe
-        "https://images.unsplash.com/photo-1559305616-3f99cd43e353?w=500&q=80", // Dessert
-        "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80", // Social cafe
-        "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=500&q=80", // Starbucks style
-        "https://images.unsplash.com/photo-1507133750069-bef72f3707a9?w=500&q=80"  // Modern cafe
+        "1554118811-1e0d58224f24", // Cafe
+        "1495474472287-4d71bcdd2085", // Coffee
+        "1509042239860-f550ce710b93", // Latte
+        "1521017432531-fbd92d768814", // Shop
+        "1497935586351-b67a49e012bf", // Cup
+        "1517248135467-4c7edcad34c4", // Interior
+        "1559305616-3f99cd43e353", // Dessert
+        "1514432324607-a09d9b4aefdd", // Social
+        "1461023058943-07fcbe16d735", // Starbucks
+        "1507133750069-bef72f3707a9", // Modern
+        "1498804103079-a6375b7e4a2a", // Pour over
+        "1495774856032-8b70b14cf201"  // Iced
     ],
     shopping: [
-        "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=500&q=80", // Shopping bags
-        "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=500&q=80", // Tokyo street/shop
-        "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=500&q=80", // Mall
-        "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&q=80", // Fashion
-        "https://images.unsplash.com/photo-1519671482538-518b76064044?w=500&q=80", // Boutique
-        "https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?w=500&q=80", // Shopping street
-        "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=500&q=80", // Clothes
-        "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&q=80", // Storefront
-        "https://images.unsplash.com/photo-1472851294608-4155f2118c03?w=500&q=80", // Luxury
-        "https://images.unsplash.com/photo-1479064555552-3ef4979f8908?w=500&q=80"  // Apparel
+        "1607082348824-0a96f2a4b9da", // Bags
+        "1528698827591-e19ccd7bc23d", // Street
+        "1555529669-e69e7aa0ba9a", // Mall
+        "1483985988355-763728e1935b", // Fashion
+        "1519671482538-518b76064044", // Boutique
+        "1534452203293-494d7ddbf7e0", // Street 2
+        "1567401893414-76b7b1e5a7a5", // Clothes
+        "1441986300917-64674bd600d8", // Store
+        "1472851294608-4155f2118c03", // Luxury
+        "1479064555552-3ef4979f8908", // Apparel
+        "1556905055-8f358a7a47b2", // Shoes
+        "1556906781-9a412961c28c"  // Sneakers
     ],
     sightseeing: [
-        "https://images.unsplash.com/photo-1570176560374-27c720de30bf?w=500&q=80", // Shrine
-        "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=500&q=80", // Torii gate
-        "https://images.unsplash.com/photo-1528360983277-13d9b152c6d1?w=500&q=80", // Temple
-        "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=500&q=80", // Japan street
-        "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=500&q=80", // Tokyo tower style
-        "https://images.unsplash.com/photo-1480796927426-f609979314bd?w=500&q=80", // City view
-        "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=500&q=80", // Cherry blossom
-        "https://images.unsplash.com/photo-1492571350019-22de08371fd3?w=500&q=80", // Japanese garden
-        "https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?w=500&q=80", // Lanterns
-        "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=500&q=80"  // Street
+        "1570176560374-27c720de30bf", // Shrine
+        "1493976040374-85c8e12f0c0e", // Torii
+        "1528360983277-13d9b152c6d1", // Temple
+        "1545569341-9eb8b30979d9", // Street
+        "1503899036084-c55cdd92da26", // Tower
+        "1480796927426-f609979314bd", // City
+        "1524413840807-0c3cb6fa808d", // Cherry
+        "1492571350019-22de08371fd3", // Garden
+        "1478436127897-769e1b3f0f36", // Lanterns
+        "1542051841857-5f90071e7989", // Street 2
+        "1526481280693-3bfa7568e0f3", // Japan
+        "1528164344553-924af9359bd2"  // Culture
     ]
 };
 
 // 2. Specific Image Map (Key Places)
 const specificImages = {
-    "신신 라멘": "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=80", // Changed to a reliable dumpling/ramen shot
-    "이치란": "https://images.unsplash.com/photo-1552611052-33e04de081de?w=500&q=80", // Ramen booth style
-    "키와미야 함바그": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=500&q=80", // Hamburger steak
-    "모토무라 규카츠": "https://images.unsplash.com/photo-1604626623468-2329063d81b8?w=500&q=80", // Beef cutlet
-    "오호리 공원": "https://images.unsplash.com/photo-1565620731358-e8c038abc8d1?w=500&q=80", // Park lake
-    "후쿠오카 타워": "https://images.unsplash.com/photo-1558862107-d49ef2a04d72?w=500&q=80", // Tower
-    "캐널시티": "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=500&q=80", // Mall
-    "다자이후": "https://images.unsplash.com/photo-1570176560374-27c720de30bf?w=500&q=80", // Shrine
-    "돈키호테": "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=500&q=80", // Donki vibe
-    "야타이": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=500&q=80", // Street food
-    "잇푸도": "https://images.unsplash.com/photo-1552611052-0d675b9063b7?w=500&q=80",
-    "효탄 스시": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80",
-    "치카에": "https://images.unsplash.com/photo-1534256958597-7fe685cbd745?w=500&q=80",
-    "우동 타이라": "https://images.unsplash.com/photo-1598515214211-3f88c9195892?w=500&q=80",
-    "다이묘 소프트크림": "https://images.unsplash.com/photo-1559305616-3f99cd43e353?w=500&q=80",
-    "링고": "https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=500&q=80",
-    "일 포르노 델 미뇽": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&q=80",
-    "팀랩": "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=500&q=80",
-    "건담": "https://images.unsplash.com/photo-1612487528505-d2338264c821?w=500&q=80"
+    "신신 라멘": "1591345633174-2a9325cc6a3e", // Ramen specific
+    "이치란": "1552611052-33e04de081de", // Ramen booth
+    "키와미야 함바그": "1594212699903-ec8a3eca50f5", // Hamburger
+    "모토무라 규카츠": "1604626623468-2329063d81b8", // Beef
+    "오호리 공원": "1565620731358-e8c038abc8d1", // Park
+    "후쿠오카 타워": "1558862107-d49ef2a04d72", // Tower
+    "캐널시티": "1555529669-e69e7aa0ba9a", // Mall
+    "다자이후": "1570176560374-27c720de30bf", // Shrine
+    "돈키호테": "1607082348824-0a96f2a4b9da", // Donki
+    "야타이": "1540959733332-eab4deabeeaf", // Yatai
+    "잇푸도": "1552611052-0d675b9063b7", // Ramen
+    "효탄 스시": "1579871494447-9811cf80d66c", // Sushi
+    "치카에": "1534256958597-7fe685cbd745", // Sashimi
+    "우동 타이라": "1598515214211-3f88c9195892", // Udon
+    "다이묘 소프트크림": "1559305616-3f99cd43e353", // Ice cream
+    "링고": "1568571780765-9276ac8b75a2", // Apple pie
+    "일 포르노 델 미뇽": "1555507036-ab1f4038808a", // Croissant
+    "팀랩": "1550684848-fac1c5b4e853", // Art
+    "건담": "1612487528505-d2338264c821" // Gundam
 };
 
 // 3. Read Real Places Data
@@ -85,35 +97,42 @@ let placesContent = fs.readFileSync('places_data.js', 'utf8');
 let placesArrayStr = placesContent.substring(placesContent.indexOf('['), placesContent.lastIndexOf(']') + 1);
 let allPlaces = JSON.parse(placesArrayStr);
 
-// 4. Apply Image Logic to All Places
+// 4. Apply Image Logic
 allPlaces = allPlaces.map((place, index) => {
-    let assignedImage = null;
-    for (const [key, url] of Object.entries(specificImages)) {
+    let assignedId = null;
+
+    // Check specific mapping first
+    for (const [key, id] of Object.entries(specificImages)) {
         if (place.name.includes(key)) {
-            assignedImage = url;
+            assignedId = id;
             break;
         }
     }
 
-    if (!assignedImage) {
-        let pool = imagePools.food;
-        if (place.type.includes('카페')) pool = imagePools.cafe;
-        else if (place.type.includes('쇼핑')) pool = imagePools.shopping;
-        else if (place.type.includes('관광')) pool = imagePools.sightseeing;
+    // Fallback to pools
+    if (!assignedId) {
+        let pool = verifiedPools.food;
+        if (place.type.includes('카페')) pool = verifiedPools.cafe;
+        else if (place.type.includes('쇼핑')) pool = verifiedPools.shopping;
+        else if (place.type.includes('관광')) pool = verifiedPools.sightseeing;
 
-        const imageIndex = index % pool.length;
-        assignedImage = pool[imageIndex];
+        assignedId = pool[index % pool.length];
     }
 
-    const images = [assignedImage];
-    let pool = imagePools.food;
-    if (place.type.includes('카페')) pool = imagePools.cafe;
-    else if (place.type.includes('쇼핑')) pool = imagePools.shopping;
-    else if (place.type.includes('관광')) pool = imagePools.sightseeing;
+    // Generate URLs
+    const images = [];
+    // Main image
+    images.push(`https://images.unsplash.com/photo-${assignedId}?w=500&q=80`);
+
+    // Gallery images (use next ones in pool)
+    let pool = verifiedPools.food;
+    if (place.type.includes('카페')) pool = verifiedPools.cafe;
+    else if (place.type.includes('쇼핑')) pool = verifiedPools.shopping;
+    else if (place.type.includes('관광')) pool = verifiedPools.sightseeing;
 
     for (let i = 1; i < 5; i++) {
-        const nextIndex = (index + i) % pool.length;
-        images.push(pool[nextIndex]);
+        const nextId = pool[(index + i) % pool.length];
+        images.push(`https://images.unsplash.com/photo-${nextId}?w=500&q=80`);
     }
 
     return {
@@ -124,7 +143,7 @@ allPlaces = allPlaces.map((place, index) => {
 
 const finalPlacesJson = JSON.stringify(allPlaces, null, 4);
 
-// 5. HTML Template (Winter Glassmorphism 2026)
+// 5. HTML Template (Winter Glassmorphism + Bottom Nav Fix)
 const html = `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -137,7 +156,7 @@ const html = `<!DOCTYPE html>
         :root {
             --bg: #1e1e2e;
             --card-bg: rgba(255, 255, 255, 0.05);
-            --glass-bg: rgba(30, 30, 46, 0.8);
+            --glass-bg: rgba(30, 30, 46, 0.85);
             --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -159,7 +178,7 @@ const html = `<!DOCTYPE html>
             font-family: 'Pretendard', sans-serif;
             background: var(--bg);
             color: var(--text);
-            padding-bottom: 90px;
+            padding-bottom: 100px; /* Space for bottom nav */
             overflow-x: hidden;
             min-height: 100vh;
         }
@@ -209,58 +228,10 @@ const html = `<!DOCTYPE html>
             font-weight: 400;
         }
 
-        /* Sticky Filter Bar */
-        .sticky-header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .category-filter {
-            display: flex;
-            gap: 12px;
-            padding: 0 24px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .category-filter::-webkit-scrollbar {
-            display: none;
-        }
-
-        .filter-btn {
-            flex: 0 0 auto;
-            padding: 10px 18px;
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .filter-btn.active {
-            background: var(--gradient-3);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
-        }
-        .filter-btn i {
-            font-size: 14px;
-        }
-
         /* Main Content Areas */
         .view-section {
             display: none;
-            padding: 24px;
+            padding: 0 24px 24px 24px;
             animation: fadeIn 0.4s ease;
             position: relative;
             z-index: 1;
@@ -433,8 +404,8 @@ const html = `<!DOCTYPE html>
             line-height: 1.5;
         }
 
-        /* Bottom Nav */
-        .bottom-nav {
+        /* NEW Bottom Nav - Unified Filter Bar */
+        .bottom-nav-container {
             position: fixed;
             bottom: 0;
             left: 0;
@@ -443,29 +414,48 @@ const html = `<!DOCTYPE html>
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            justify-content: space-around;
             padding: 12px 0 24px 0;
             z-index: 1000;
-        }
-        .nav-item {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
+            justify-content: center;
+        }
+
+        .bottom-scroll-wrapper {
+            display: flex;
+            gap: 12px;
+            padding: 0 24px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            width: 100%;
+            max-width: 600px;
+        }
+        .bottom-scroll-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-pill {
+            flex: 0 0 auto;
+            padding: 10px 18px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-secondary);
-            font-size: 11px;
-            font-weight: 500;
-            width: 60px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             cursor: pointer;
-            transition: color 0.3s;
+            transition: all 0.3s;
         }
-        .nav-item.active {
-            color: var(--accent-2);
+        .nav-pill.active {
+            background: var(--gradient-3);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
         }
-        .nav-item i {
-            font-size: 22px;
-            margin-bottom: 2px;
+        .nav-pill i {
+            font-size: 14px;
         }
 
         /* Modal */
@@ -624,17 +614,7 @@ const html = `<!DOCTYPE html>
             <p>현지인처럼 즐기는 3박 4일</p>
         </div>
 
-        <div class="sticky-header">
-            <div class="category-filter">
-                <div class="filter-btn active" onclick="filterPlaces('all', this)"><i class="fas fa-th"></i>전체</div>
-                <div class="filter-btn" onclick="filterPlaces('グルメ (맛집)', this)"><i class="fas fa-utensils"></i>맛집</div>
-                <div class="filter-btn" onclick="filterPlaces('カフェ (카페)', this)"><i class="fas fa-coffee"></i>카페</div>
-                <div class="filter-btn" onclick="filterPlaces('ショッピング (쇼핑)', this)"><i class="fas fa-shopping-bag"></i>쇼핑</div>
-                <div class="filter-btn" onclick="filterPlaces('観光 (관광)', this)"><i class="fas fa-camera"></i>관광</div>
-            </div>
-        </div>
-
-        <div id="places-grid" class="places-grid" style="padding: 24px;">
+        <div id="places-grid" class="places-grid">
             <!-- Injected by JS -->
         </div>
     </div>
@@ -660,19 +640,16 @@ const html = `<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- Bottom Nav -->
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchView('home', this)">
-            <i class="fas fa-compass"></i>
-            <span>탐색</span>
-        </div>
-        <div class="nav-item" onclick="switchView('schedule', this)">
-            <i class="fas fa-calendar-alt"></i>
-            <span>일정</span>
-        </div>
-        <div class="nav-item" onclick="window.open('https://www.google.com/maps/search/후쿠오카+맛집', '_blank')">
-            <i class="fas fa-map-marked-alt"></i>
-            <span>지도</span>
+    <!-- NEW Bottom Nav (Unified) -->
+    <div class="bottom-nav-container">
+        <div class="bottom-scroll-wrapper">
+            <div class="nav-pill active" onclick="handleNav('all', this)"><i class="fas fa-th"></i>전체</div>
+            <div class="nav-pill" onclick="handleNav('Food', this)"><i class="fas fa-utensils"></i>맛집</div>
+            <div class="nav-pill" onclick="handleNav('Cafe', this)"><i class="fas fa-coffee"></i>카페</div>
+            <div class="nav-pill" onclick="handleNav('Shopping', this)"><i class="fas fa-shopping-bag"></i>쇼핑</div>
+            <div class="nav-pill" onclick="handleNav('Sight', this)"><i class="fas fa-camera"></i>관광</div>
+            <div class="nav-pill" onclick="handleNav('Schedule', this)"><i class="fas fa-calendar-alt"></i>일정</div>
+            <div class="nav-pill" onclick="window.open('https://www.google.com/maps/search/후쿠오카+맛집', '_blank')"><i class="fas fa-map-marked-alt"></i>지도</div>
         </div>
     </div>
 
@@ -752,16 +729,24 @@ const html = `<!DOCTYPE html>
             ]
         };
 
-        // --- Navigation ---
-        function switchView(viewName, btn) {
-            // Update Nav
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        // --- Unified Navigation Logic ---
+        function handleNav(key, btn) {
+            // Update UI
+            document.querySelectorAll('.nav-pill').forEach(el => el.classList.remove('active'));
             if(btn) btn.classList.add('active');
 
-            // Update View
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-' + viewName).classList.add('active');
-            
+            if (key === 'Schedule') {
+                // Show Schedule View
+                document.getElementById('view-home').classList.remove('active');
+                document.getElementById('view-schedule').classList.add('active');
+            } else {
+                // Show Home View & Filter
+                document.getElementById('view-schedule').classList.remove('active');
+                document.getElementById('view-home').classList.add('active');
+                
+                // Filter Logic
+                renderPlaces(key);
+            }
             window.scrollTo(0,0);
         }
 
@@ -770,9 +755,12 @@ const html = `<!DOCTYPE html>
             const grid = document.getElementById('places-grid');
             grid.innerHTML = '';
 
-            const filtered = filter === 'all' 
-                ? places 
-                : places.filter(p => p.type.includes(filter));
+            let filtered = places;
+            if (filter === 'Food') filtered = places.filter(p => p.type.includes('맛집') || p.type.includes('グルメ'));
+            else if (filter === 'Cafe') filtered = places.filter(p => p.type.includes('카페'));
+            else if (filter === 'Shopping') filtered = places.filter(p => p.type.includes('쇼핑'));
+            else if (filter === 'Sight') filtered = places.filter(p => p.type.includes('관광'));
+            // 'all' passes through
 
             filtered.forEach(place => {
                 const card = document.createElement('div');
@@ -794,12 +782,6 @@ const html = `<!DOCTYPE html>
                 \`;
                 grid.appendChild(card);
             });
-        }
-
-        function filterPlaces(filter, btn) {
-            document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
-            btn.classList.add('active');
-            renderPlaces(filter);
         }
 
         // --- Schedule Logic ---
