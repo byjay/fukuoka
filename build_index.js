@@ -187,6 +187,16 @@ const html = `<!DOCTYPE html>
         .review-score { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
         .review-text { font-size: 14px; line-height: 1.6; color: #d0d0d0; font-style: italic; }
 
+        /* Modal Gallery */
+        .modal-gallery {
+            display: flex; gap: 10px; overflow-x: auto; padding: 0 4px 16px 4px; scrollbar-width: none;
+            margin-bottom: 24px;
+        }
+        .modal-gallery img {
+            width: 120px; height: 120px; object-fit: cover; border-radius: 12px; flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
     </style>
 </head>
 <body>
@@ -259,6 +269,11 @@ const html = `<!DOCTYPE html>
             <div style="margin-bottom:24px;">
                 <h3 style="font-size:16px; color:#764ba2; margin-bottom:8px;">메뉴</h3>
                 <div id="modal-menu" style="font-size:14px; color:#ddd;">Menu</div>
+            </div>
+
+            <div id="gallery-section" style="margin-bottom:24px; display:none;">
+                <h3 style="font-size:16px; color:#764ba2; margin-bottom:8px;">사진</h3>
+                <div id="modal-gallery" class="modal-gallery"></div>
             </div>
 
             <div style="margin-bottom:24px;">
@@ -392,6 +407,22 @@ const html = `<!DOCTYPE html>
             document.getElementById('modal-menu').innerHTML = place.menu;
             document.getElementById('modal-reviews').innerHTML = place.reviews;
             document.getElementById('modal-map-btn').href = place.mapUrl;
+
+            // Gallery Logic
+            const gallerySection = document.getElementById('gallery-section');
+            const galleryContainer = document.getElementById('modal-gallery');
+            
+            if (place.images && place.images.length > 1) {
+                gallerySection.style.display = 'block';
+                let galleryHtml = '';
+                for (let i = 0; i < place.images.length; i++) {
+                    const imgUrl = place.images[i];
+                    galleryHtml += '<img src="' + imgUrl + '" loading="lazy" onclick="document.getElementById(\\'modal-img\\').src=\\'' + imgUrl + '\\'">';
+                }
+                galleryContainer.innerHTML = galleryHtml;
+            } else {
+                gallerySection.style.display = 'none';
+            }
 
             document.getElementById('detailModal').classList.add('active');
             document.body.style.overflow = 'hidden';
