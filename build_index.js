@@ -306,7 +306,7 @@ const html = `<!DOCTYPE html>
                 card.onclick = () => openModal(place.id);
                 card.innerHTML = \`
                     <div class="place-image-container">
-                        <img src="\${place.images[0]}" class="place-image" loading="lazy">
+                        <img src="\${place.images[0]}" class="place-image" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=500&q=80';">
                         <div class="place-badge">\${place.rating.split(' ')[0]}</div>
                     </div>
                     <div class="place-info">

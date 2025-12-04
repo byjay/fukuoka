@@ -64,6 +64,9 @@ def create_place(id_suffix, area, type_str, name, rating, desc, menu_items, revi
         img_id = pool[(start_idx + i) % len(pool)]
         images.append(f"https://images.unsplash.com/photo-{img_id}?w=500&q=80")
 
+    # Robust Map URL
+    safe_map_url = f"https://www.google.com/maps/search/?api=1&query={name}"
+
     return {
         "id": f"p{id_suffix}",
         "area": area,
@@ -75,7 +78,7 @@ def create_place(id_suffix, area, type_str, name, rating, desc, menu_items, revi
         "reviews": reviews_html, 
         "info": info,
         "transport": transport,
-        "mapUrl": map_url,
+        "mapUrl": safe_map_url,
         "images": images
     }
 
@@ -462,7 +465,7 @@ additional_places = [
 
 start_id = 61
 for area, type_str, name, desc, rating, img_key, review in additional_places:
-    places.append(create_place(start_id, area, type_str, name, f"{rating} (500+)", desc, {"대표 메뉴": "1,000엔"}, review, "10:00 - 22:00", f"{area.split(' ')[0]}역 근처", f"https://goo.gl/maps/search/{name}", [img_key]))
+    places.append(create_place(start_id, area, type_str, name, f"{rating} (500+)", desc, {"대표 메뉴": "1,000엔"}, review, "10:00 - 22:00", f"{area.split(' ')[0]}역 근처", "", [img_key]))
     start_id += 1
 
 # Write to file
