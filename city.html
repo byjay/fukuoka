@@ -15,35 +15,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="./styles/hybrid.css">
-    <style>
-        .filter-bar {
-            position: sticky;
-            top: 70px;
-            /* Below nav */
-            background: rgba(13, 13, 13, 0.95);
-            padding: 15px 0;
-            z-index: 90;
-            border-bottom: 1px solid var(--glass-border);
-            text-align: center;
-        }
-
-        .filter-btn {
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            color: var(--text-color);
-            padding: 8px 16px;
-            border-radius: 20px;
-            margin: 0 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .filter-btn.active {
-            background: var(--accent-color);
-            color: #000;
-            border-color: var(--accent-color);
-        }
-    </style>
+    <link rel="stylesheet" href="./styles/tabs.css">
 </head>
 
 <body>
@@ -53,13 +25,11 @@
         <div class="logo"><a href="index.html">WORLD BUILDER</a></div>
         <div class="nav-links">
             <a href="index.html" class="nav-item">Home</a>
-            <a href="#" onclick="alert('Booking feature coming soon!'); return false;" class="nav-item"
-                style="color: var(--accent-color)">Book Trip</a>
         </div>
     </nav>
 
     <!-- HERO -->
-    <section class="hero" style="height: 60vh;">
+    <section class="hero" style="height: 50vh;">
         <img id="hero-bg" src=""
             style="position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0.5; z-index: -1;">
         <div class="hero-content">
@@ -69,37 +39,79 @@
         </div>
     </section>
 
-    <!-- FILTER -->
-    <div class="filter-bar">
-        <button class="filter-btn active" onclick="filterPlaces('all')">All</button>
-        <button class="filter-btn" onclick="filterPlaces('맛집')">Restaurants</button>
-        <button class="filter-btn" onclick="filterPlaces('카페')">Cafes</button>
-        <button class="filter-btn" onclick="filterPlaces('관광')">Sightseeing</button>
-        <button class="filter-btn" onclick="filterPlaces('쇼핑')">Shopping</button>
+    <!-- TABS Navigation -->
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('places')">All Places</button>
+        <button class="tab-btn" onclick="switchTab('itinerary')">Itinerary</button>
+        <button class="tab-btn" onclick="switchTab('map')">Map View</button>
     </div>
 
-    <!-- CONTENT -->
-    <section class="container">
-        <!-- Native Ad Top -->
-        <div id="ad-top"></div>
+    <!-- MAIN LAYOUT -->
+    <div class="page-layout">
 
-        <div class="grid" id="content-grid">
-            <!-- Loading State -->
-            <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
-                <div class="serif" style="font-size: 1.5rem; color: var(--accent-color);">Loading Data...</div>
+        <!-- LEFT: Content Area -->
+        <main class="main-content">
+
+            <!-- VIEW: PLACES -->
+            <div id="tab-places" class="tab-content active">
+                <!-- Filter Chips -->
+                <div style="margin-bottom: 20px; display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="filter-btn active" onclick="filterPlaces('all', this)">All</button>
+                    <button class="filter-btn" onclick="filterPlaces('맛집', this)">Restaurants</button>
+                    <button class="filter-btn" onclick="filterPlaces('카페', this)">Cafes</button>
+                    <button class="filter-btn" onclick="filterPlaces('관광', this)">Sightseeing</button>
+                    <button class="filter-btn" onclick="filterPlaces('쇼핑', this)">Shopping</button>
+                </div>
+
+                <div class="grid" id="content-grid">
+                    <div style="text-align: center; padding: 50px;">
+                        <div class="serif" style="font-size: 1.5rem; color: var(--accent-color);">Loading Data...</div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Native Ad Bottom -->
-        <div id="ad-bottom"></div>
-    </section>
+            <!-- VIEW: ITINERARY -->
+            <div id="tab-itinerary" class="tab-content">
+                <h2 class="serif">3-Day Sample Itinerary</h2>
+                <div id="itinerary-content">
+                    <p style="opacity: 0.7;">AI is curating the perfect route for you based on the collected places...
+                    </p>
+                    <div id="itinerary-list"></div>
+                </div>
+            </div>
 
-    <footer>
+            <!-- VIEW: MAP -->
+            <div id="tab-map" class="tab-content">
+                <h2 class="serif">Interactive Map</h2>
+                <div class="map-placeholder">
+                    Google Map Integration Coming Soon
+                </div>
+            </div>
+
+        </main>
+
+        <!-- RIGHT: Sidebar (Affiliates & Value prop) -->
+        <aside class="sidebar">
+            <div class="card" style="padding: 20px; text-align: center; margin-bottom: 30px;">
+                <h3 class="serif">Plan Your Trip</h3>
+                <p style="font-size:0.9rem; opacity:0.8; margin: 10px 0;">We've partnered with top providers to give you
+                    the best deals.</p>
+            </div>
+
+            <!-- Inject Dynamic Affiliates -->
+            <div id="sidebar-affiliates"></div>
+
+        </aside>
+
+    </div>
+
+    <footer style="text-align:center; padding: 50px 0; opacity: 0.6; font-size: 0.8rem;">
         <p>&copy; 2025 World Builder. <a href="#">Become a Partner</a></p>
     </footer>
 
     <!-- SCRIPTS -->
     <script src="./scripts/ui_core.js"></script>
+    <script src="./scripts/affiliates.js"></script>
     <script>
         const cityCode = HybridUI.getUrlParam('city');
         const cityName = HybridUI.getUrlParam('name') || cityCode;
@@ -108,8 +120,14 @@
         // Setup Page
         document.getElementById('city-title').innerText = decodeURIComponent(cityName);
         const heroBg = document.getElementById('hero-bg');
-        // Unsplash Source helps with dynamic vibe
-        heroBg.src = `https://source.unsplash.com/1600x900/?${cityCode},travel,landmark`;
+        heroBg.src = `https://source.unsplash.com/1600x900/?${cityCode},landmark`;
+
+        // Load Affiliates
+        const sidebar = document.getElementById('sidebar-affiliates');
+        if (sidebar && window.AffiliateManager) {
+            sidebar.innerHTML += AffiliateManager.renderBanner('hotel');
+            sidebar.innerHTML += AffiliateManager.renderBanner('activity');
+        }
 
         // Load Data
         if (cityCode) {
@@ -117,26 +135,30 @@
                 .then(data => {
                     allPlaceData = data;
                     renderGrid(data);
-
-                    // Inject Ads
-                    document.getElementById('ad-top').innerHTML = HybridUI.renderAdCard('hotel');
+                    generateSimpleItinerary(data); // New feature
                 })
                 .catch(err => {
                     document.getElementById('content-grid').innerHTML = `
-                        <div style="grid-column: 1/-1; text-align: center;">
+                        <div style="text-align: center; padding: 50px;">
                             <h3>Data Not Found</h3>
-                            <p>We are still collecting data for this city. Please try running the generator.</p>
-                            <code style="display:block; margin-top:10px; opacity:0.6">${err.message}</code>
+                            <p>We are still collecting data for this city (Backfill in progress...).</p>
                         </div>
                     `;
                 });
         }
 
-        // Filtering Logic
-        window.filterPlaces = (type) => {
-            // Update buttons
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        // Logic
+        window.switchTab = (tabName) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
             event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        };
+
+        window.filterPlaces = (type, btn) => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
             if (type === 'all') {
                 renderGrid(allPlaceData);
@@ -150,28 +172,36 @@
             const grid = document.getElementById('content-grid');
             grid.innerHTML = '';
 
-            if (data.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No places found for this category.</p>';
+            if (!data || data.length === 0) {
+                grid.innerHTML = '<p>No places found.</p>';
                 return;
             }
 
             data.forEach((place, index) => {
                 grid.innerHTML += HybridUI.renderPlaceCard(place);
-
-                // Inject contextual ad every 12 items
-                if ((index + 1) % 12 === 0) {
-                    // Create a full-width ad span or just insert a distinct card
-                    // For grid layout, we can just insert a card with distinct styling
-                    // But simpler to just inject it as a node (HTML string concatenation handles it)
-                    grid.innerHTML += `
-                        <div class="card" style="background: linear-gradient(135deg, #d4af37 0%, #000 100%); border:none; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px;">
-                             <h3 class="serif" style="color:#fff; margin-bottom:10px;">Travel Smart</h3>
-                             <p style="color:#fff; margin-bottom:15px; font-size:0.9rem;">Get 5% off travel insurance.</p>
-                             <button style="background:#fff; color:#000; padding:8px 16px; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">Learn More</button>
-                        </div>
-                     `;
-                }
             });
+        }
+
+        // Simple Frontend Itinerary Generator (Mock)
+        function generateSimpleItinerary(data) {
+            const list = document.getElementById('itinerary-list');
+            if (!data || data.length < 5) return;
+
+            // Pick 3 random sightseeing + 1 food per day
+            const spots = data.filter(p => p.type.includes('관광')).slice(0, 3);
+            const food = data.filter(p => p.type.includes('맛집')).slice(0, 2);
+
+            let html = `
+                <div class="card" style="margin-top:20px; padding:20px;">
+                    <h3 style="color:var(--accent-color)">Day 1: Essence of ${decodeURIComponent(cityName)}</h3>
+                    <ul style="margin: 10px 0 20px 20px; line-height: 1.6;">
+            `;
+
+            spots.forEach(s => html += `<li>Visit <strong>${s.name}</strong> (${s.info})</li>`);
+            food.forEach(f => html += `<li>Lunch at <strong>${f.name}</strong> - ${f.menu.replace(/<[^>]*>/g, '').substring(0, 30)}...</li>`);
+
+            html += `</ul></div>`;
+            list.innerHTML = html;
         }
     </script>
 </body>
