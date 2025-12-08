@@ -1,0 +1,269 @@
+:root {
+    /* Colors - Dark Premium Palette */
+    --bg-color: #0d0d0d;
+    --text-color: #f0f0f0;
+    --accent-color: #d4af37; /* Gold/Bronze for luxury feel */
+    --secondary-bg: #1a1a1a;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    
+    /* Typography */
+    --font-serif: 'Playfair Display', serif; /* Editorial feel */
+    --font-sans: 'Inter', sans-serif; /* Utility/UI */
+    
+    /* Spacing */
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 32px;
+    --spacing-xl: 64px;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-sans);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .serif {
+    font-family: var(--font-serif);
+    font-weight: 400;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--accent-color);
+}
+
+/* --- COMPONENTS --- */
+
+/* 1. Hero Section (Cinematic) */
+.hero {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.6;
+    z-index: -1;
+}
+
+.hero-content {
+    z-index: 1;
+    max-width: 800px;
+    padding: var(--spacing-md);
+}
+
+.hero-title {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+    letter-spacing: -1px;
+    text-transform: uppercase;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    margin-bottom: var(--spacing-lg);
+    font-weight: 300;
+}
+
+/* 2. Navigation (Globe/Map Style) */
+.nav-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+    z-index: 100;
+    box-sizing: border-box;
+}
+
+.logo {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.nav-links {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.nav-item {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+/* 3. Utility Components (Cards, Grids) */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.section-title {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.card {
+    background: var(--secondary-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: var(--spacing-md);
+}
+
+.card-title {
+    font-size: 1.2rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.card-meta {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* 4. Native Ads / Contextual Commerce (High Revenue) */
+.ad-card {
+    border: 1px solid var(--accent-color);
+    background: rgba(212, 175, 55, 0.05);
+    position: relative;
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.ad-label {
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background: var(--bg-color);
+    color: var(--accent-color);
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.ad-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.ad-content h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+}
+
+.ad-cta {
+    background: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    display: inline-block;
+}
+
+/* 5. Scrollytelling / Article Layout */
+.article-body {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.chapter-separator {
+    margin: var(--spacing-xl) 0;
+    border-top: 1px solid var(--glass-border);
+    position: relative;
+    text-align: center;
+}
+
+.chapter-title {
+    background: var(--bg-color);
+    padding: 0 var(--spacing-md);
+    position: relative;
+    top: -15px;
+    display: inline-block;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--accent-color);
+}
+
+/* 6. Footer */
+footer {
+    border-top: 1px solid var(--glass-border);
+    padding: var(--spacing-xl) 0;
+    text-align: center;
+    opacity: 0.5;
+    font-size: 0.9rem;
+    margin-top: var(--spacing-xl);
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+}

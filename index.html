@@ -1,903 +1,100 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>후쿠오카 겨울 가이드 2025</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #121212;
-            --card-bg: #1e1e1e;
-            --glass-bg: rgba(30, 30, 30, 0.85);
-            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-2: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            --accent: #ff6b9d;
-            --text: #ffffff;
-            --text-secondary: #b0b0b0;
-            --radius: 16px;
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            font-family: 'Pretendard', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            padding-bottom: 100px; /* Space for bottom nav */
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        /* Snow Effect */
-        .snow {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;
-            background-image: radial-gradient(4px 4px at 100px 50px, #fff, transparent), radial-gradient(6px 6px at 200px 150px, #fff, transparent);
-            background-size: 650px 650px; animation: snow 10s linear infinite; opacity: 0.15;
-        }
-        @keyframes snow { 0% { background-position: 0 0, 0 0; } 100% { background-position: 100px 650px, 200px 650px; } }
-
-        /* Premium Hero */
-        .hero {
-            padding: 40px 24px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(18,18,18,1)), url('https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=800&q=80') center/cover;
-            height: 220px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-        }
-        .hero h1 {
-            font-size: 32px; font-weight: 800; line-height: 1.2;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.8);
-            margin-bottom: 8px;
-            background: linear-gradient(to right, #fff, #a1c4fd);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .hero p { font-size: 14px; color: rgba(255,255,255,0.9); font-weight: 500; }
-
-        /* Top Sticky Schedule Nav (Only in Schedule View) */
-        .top-schedule-nav {
-            position: sticky; top: 0; z-index: 90;
-            background: var(--glass-bg); backdrop-filter: blur(16px);
-            padding: 12px 0;
-            display: none; /* Hidden by default */
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        .top-schedule-nav.active { display: block; }
-
-        .day-tabs {
-            display: flex; gap: 10px; padding: 0 24px; overflow-x: auto; scrollbar-width: none;
-        }
-        .day-tab {
-            padding: 8px 16px; border-radius: 20px;
-            background: rgba(255,255,255,0.1); color: var(--text-secondary);
-            font-size: 14px; font-weight: 600; white-space: nowrap;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
-        }
-        .day-tab.active {
-            background: var(--gradient-1); color: white; border-color: transparent;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        /* Places Grid */
-        .places-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; padding: 0 24px;
-            position: relative; z-index: 1;
-        }
-        @media (max-width: 480px) { .places-grid { grid-template-columns: 1fr 1fr; } }
-
-        .place-card {
-            background: var(--card-bg); border-radius: var(--radius); overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1); position: relative;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .place-card:active { transform: scale(0.98); }
-        .place-image-container { position: relative; padding-top: 100%; background: #333; }
-        .place-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-        .place-badge {
-            position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: #ffd700;
-            padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 700;
-            backdrop-filter: blur(4px);
-        }
-        .place-info { padding: 12px; }
-        .place-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .place-meta { font-size: 11px; color: var(--text-secondary); display: flex; gap: 6px; }
-
-        /* Bottom Fixed Nav (Pill Style) */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(20, 20, 20, 0.95); 
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding: 16px 0 24px 0; z-index: 1000;
-            display: flex; justify-content: center;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-        }
-        .nav-scroll {
-            display: flex; gap: 10px; padding: 0 20px; overflow-x: auto; width: 100%; max-width: 600px; scrollbar-width: none;
-        }
-        /* Pill Style Button */
-        .nav-btn {
-            flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 0 16px; height: 40px;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.1);
-            color: #b0b0b0;
-            font-size: 13px; font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.2s;
-        }
-        .nav-btn.active {
-            background: var(--gradient-1); color: white; border-color: transparent;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-        .nav-btn i { font-size: 14px; }
-
-        /* Schedule Content */
-        .schedule-container { padding: 24px; display: none; position: relative; z-index: 1; }
-        .schedule-container.active { display: block; }
-        .timeline-item {
-            padding-left: 20px; border-left: 2px solid rgba(255,255,255,0.1); margin-bottom: 24px; position: relative;
-        }
-        .timeline-item::before {
-            content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px;
-            background: #764ba2; border-radius: 50%; box-shadow: 0 0 10px #764ba2;
-        }
-        .time { color: #a1c4fd; font-weight: 700; font-size: 13px; margin-bottom: 4px; }
-        .event-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-        .event-desc { font-size: 14px; color: var(--text-secondary); }
-
-        /* Modal */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #121212; z-index: 2000; overflow-y: auto;
-            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .modal.active { display: block; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .modal-hero { width: 100%; height: 300px; object-fit: cover; mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
-        .modal-content { padding: 0 24px 40px; position: relative; top: -40px; }
-        .modal-close {
-            position: fixed; top: 20px; left: 20px; width: 40px; height: 40px;
-            background: rgba(0,0,0,0.5); border-radius: 50%; color: white;
-            display: flex; align-items: center; justify-content: center; z-index: 2001;
-            backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .review-summary-card {
-            background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-top: 10px;
-        }
-        .review-score { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
-        .review-text { font-size: 14px; line-height: 1.6; color: #d0d0d0; font-style: italic; }
-
-        /* Modal Gallery */
-        .modal-gallery {
-            display: flex; gap: 10px; overflow-x: auto; padding: 0 4px 16px 4px; scrollbar-width: none;
-            margin-bottom: 24px;
-        }
-        .modal-gallery img {
-            width: 120px; height: 120px; object-fit: cover; border-radius: 12px; flex-shrink: 0;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE WORLD BUILDER | Cinematic Travel</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles/hybrid.css">
 </head>
 <body>
-    <div class="snow"></div>
 
-    <!-- Home View -->
-    <div id="view-home">
-        <div class="hero">
-            <h1>FUKUOKA<br>WINTER 2025</h1>
-            <p>후쿠오카 겨울 감성 여행 가이드</p>
+    <!-- NAV -->
+    <nav class="nav-bar">
+        <div class="logo">WORLD BUILDER</div>
+        <div class="nav-links">
+            <a href="#" class="nav-item">Destinations</a>
+            <a href="#" class="nav-item">Journal</a>
+            <a href="#" class="nav-item" style="color: var(--accent-color)">Premium</a>
         </div>
-        <div id="places-grid" class="places-grid"></div>
-    </div>
+    </nav>
 
-    <!-- Schedule View -->
-    <div id="view-schedule" style="display:none;">
-        <div class="top-schedule-nav active">
-            <div class="day-tabs">
-                <div class="day-tab active" onclick="showDay('day1', this)">1일차 (텐진)</div>
-                <div class="day-tab" onclick="showDay('day2', this)">2일차 (유후인)</div>
-                <div class="day-tab" onclick="showDay('day3', this)">3일차 (하카타)</div>
-                <div class="day-tab" onclick="showDay('day4', this)">4일차 (귀국)</div>
-            </div>
+    <!-- HERO -->
+    <section class="hero">
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="https://videos.pexels.com/video-files/3205634/3205634-hd_1920_1080_25fps.mp4" type="video/mp4">
+            <!-- Fallback video -->
+        </video>
+        <div class="hero-content">
+            <div class="serif" style="color: var(--accent-color); margin-bottom: 20px;">The Art of Exploration</div>
+            <h1 class="hero-title">Discover the Extraordinary</h1>
+            <p class="hero-subtitle">Curated guides for the modern voyager. Built by AI, refined by design.</p>
         </div>
-        <div class="schedule-container active" id="schedule-content"></div>
-    </div>
+    </section>
 
-    <!-- Bottom Nav (Pill Style) -->
-    <div class="bottom-nav">
-        <div class="nav-scroll">
-            <div class="nav-btn active" onclick="switchTab('all', this)">
-                <i class="fas fa-th"></i> <span>전체</span>
-            </div>
-            <div class="nav-btn" onclick="switchTab('Food', this)">
-                <i class="fas fa-utensils"></i> <span>맛집</span>
-            </div>
-            <div class="nav-btn" onclick="switchTab('Cafe', this)">
-                <i class="fas fa-coffee"></i> <span>카페</span>
-            </div>
-            <div class="nav-btn" onclick="switchTab('Shopping', this)">
-                <i class="fas fa-shopping-bag"></i> <span>쇼핑</span>
-            </div>
-            <div class="nav-btn" onclick="switchTab('Sight', this)">
-                <i class="fas fa-camera"></i> <span>관광</span>
-            </div>
-            <div class="nav-btn" onclick="toggleSchedule(this)">
-                <i class="fas fa-calendar-alt"></i> <span>일정</span>
-            </div>
-            <div class="nav-btn" onclick="window.open('https://www.google.com/maps/search/후쿠오카+맛집', '_blank')">
-                <i class="fas fa-map-marked-alt"></i> <span>지도</span>
-            </div>
+    <!-- DESTINATIONS GRID -->
+    <section class="container" id="destinations">
+        <div class="section-title serif">Select Your Journey</div>
+        
+        <div class="grid" id="city-grid">
+            <!-- Cities will be injected here -->
         </div>
-    </div>
+    </section>
 
-    <!-- Modal -->
-    <div id="detailModal" class="modal">
-        <div class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></div>
-        <img id="modal-img" src="" class="modal-hero">
-        <div class="modal-content">
-            <h2 id="modal-title" style="font-size:24px; margin-bottom:8px;">Title</h2>
-            <div style="color:#888; font-size:13px; margin-bottom:20px;">
-                <span id="modal-type">TYPE</span> • <span id="modal-area">AREA</span>
-            </div>
-            
-            <div style="margin-bottom:24px;">
-                <h3 style="font-size:16px; color:#764ba2; margin-bottom:8px;">소개</h3>
-                <p id="modal-desc" style="font-size:15px; line-height:1.6; color:#ddd;">Desc</p>
-            </div>
+    <footer>
+        <p>&copy; 2025 World Builder using Gemini 2.0 Flash. All Rights Reserved.</p>
+    </footer>
 
-            <div style="margin-bottom:24px;">
-                <h3 style="font-size:16px; color:#764ba2; margin-bottom:8px;">메뉴</h3>
-                <div id="modal-menu" style="font-size:14px; color:#ddd;">Menu</div>
-            </div>
-
-            <div id="gallery-section" style="margin-bottom:24px; display:none;">
-                <h3 style="font-size:16px; color:#764ba2; margin-bottom:8px;">사진</h3>
-                <div id="modal-gallery" class="modal-gallery"></div>
-            </div>
-
-            <div style="margin-bottom:24px;">
-                <h3 style="font-size:16px; color:#764ba2; margin-bottom:8px;">리뷰 요약</h3>
-                <div id="modal-reviews">Reviews</div>
-            </div>
-
-             <a id="modal-map-btn" href="#" target="_blank" style="display:block; width:100%; padding:16px; background:var(--gradient-1); color:white; text-align:center; border-radius:12px; text-decoration:none; font-weight:bold;">구글맵 보기</a>
-        </div>
-    </div>
-
+    <!-- SCRIPTS -->
+    <script src="./destinations.js"></script> <!-- Defines DESTINATIONS const -->
+    <script src="./scripts/ui_core.js"></script>
     <script>
-        const places = [
-    {
-        "id": "p1",
-        "area": "Daimyo (다이묘)",
-        "type": "Tonkatsu (돈카츠)",
-        "name": "모토무라 규카츠",
-        "rating": "4.8 (11,158)",
-        "desc": "돈까스 전문식당. 살살 녹는 규카츠의 정석.",
-        "menu": "<ul class='menu-list'><li><span>규카츠 정식 (130g)</span> <span>1,930엔</span></li><li><span>규카츠 정식 (260g)</span> <span>2,600엔</span></li><li><span>생맥주</span> <span>600엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.8</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"음식은 말해뭐해 맛있고 살살 녹는 맛이었습니다.\"\n        </div>\n    </div>\n    ",
-        "info": "11:00 - 22:00",
-        "transport": "1 Chome-14-5 Daimyo",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Motomura Gyukatsu Fukuoka",
-        "images": [
-            "https://images.unsplash.com/photo-1553621042-f6e147245754?w=500&q=80",
-            "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=500&q=80",
-            "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p2",
-        "area": "Hakata (하카타)",
-        "type": "Yakiniku (야키니쿠)",
-        "name": "니쿠이치 하카타점",
-        "rating": "4.4 (2,124)",
-        "desc": "편안한 분위기의 야키니쿠 식당. 가성비 좋은 와규.",
-        "menu": "<ul class='menu-list'><li><span>상급 갈비</span> <span>980엔</span></li><li><span>특선 7종 모듬</span> <span>3,980엔</span></li><li><span>육회</span> <span>880엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.4</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"별이 5개뿐인게 너무 아쉽네요 10개였음 걍 별 10개 무조건이에요.\"\n        </div>\n    </div>\n    ",
-        "info": "16:00 - 01:00",
-        "transport": "Hakataekiminami 1 Chome-2-18",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Nikuichi Hakata",
-        "images": [
-            "https://images.unsplash.com/photo-1553621042-f6e147245754?w=500&q=80",
-            "https://images.unsplash.com/photo-1542359553-66256f68c871?w=500&q=80",
-            "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p3",
-        "area": "Haruyoshi (하루요시)",
-        "type": "Izakaya (이자카야)",
-        "name": "설화(유키하나)",
-        "rating": "4.6 (1,102)",
-        "desc": "한국인 입맛에 맞는 안주가 가득한 이자카야.",
-        "menu": "<ul class='menu-list'><li><span>모츠나베</span> <span>1,500엔</span></li><li><span>꼬치구이 모듬</span> <span>1,200엔</span></li><li><span>하이볼</span> <span>500엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.6</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"음식 맛은 맛있지도, 맛없지도 않은... 하지만 분위기는 좋습니다.\"\n        </div>\n    </div>\n    ",
-        "info": "17:00 - 03:00",
-        "transport": "Haruyoshi 3 Chome-11-19",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Yukihana Fukuoka",
-        "images": [
-            "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80",
-            "https://images.unsplash.com/photo-1519985176271-adb1088fa94c?w=500&q=80",
-            "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p4",
-        "area": "Tenjin (텐진)",
-        "type": "Ramen (라멘)",
-        "name": "신신 라멘 텐진 본점",
-        "rating": "4.3 (7,160)",
-        "desc": "후쿠오카 3대 라멘. 잡내 없는 깔끔한 돈코츠 국물.",
-        "menu": "<ul class='menu-list'><li><span>신신 라멘</span> <span>760엔</span></li><li><span>반숙 계란 라멘</span> <span>890엔</span></li><li><span>교자</span> <span>550엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.3</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"음식은 모두 맛있었어요 50분 정도 웨이팅하고 들어갔어요.\"\n        </div>\n    </div>\n    ",
-        "info": "11:00 - 03:00",
-        "transport": "3 Chome-2-19 Tenjin",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=ShinShin Ramen Tenjin",
-        "images": [
-            "https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=500&q=80",
-            "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=80",
-            "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p5",
-        "area": "Imaizumi (이마이즈미)",
-        "type": "Izakaya (이자카야)",
-        "name": "하카타로바타 피쉬맨",
-        "rating": "4.8 (5,807)",
-        "desc": "회 세트 메뉴를 즐길 수 있는 세련된 장소. 계단식 회 플레이팅이 유명.",
-        "menu": "<ul class='menu-list'><li><span>피쉬맨 모듬회 (계단)</span> <span>2,500엔</span></li><li><span>고등어 회</span> <span>1,200엔</span></li><li><span>명란 계란말이</span> <span>800엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.8</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"회 세트 메뉴를 즐길 수 있는 세련된 장소. 비주얼이 압도적입니다.\"\n        </div>\n    </div>\n    ",
-        "info": "11:00 - 23:00",
-        "transport": "1 Chome-4-23 Imaizumi",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Hakata Robata Fishman",
-        "images": [
-            "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80",
-            "https://images.unsplash.com/photo-1519985176271-adb1088fa94c?w=500&q=80",
-            "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p6",
-        "area": "Maizuru (마이즈루)",
-        "type": "Seafood (해산물)",
-        "name": "하카타 고마사바야",
-        "rating": "4.4 (2,149)",
-        "desc": "시장에서 사 온 생선으로 요리하는 캐주얼한 음식점. 고등어 회 정식이 일품.",
-        "menu": "<ul class='menu-list'><li><span>고마사바 정식</span> <span>1,200엔</span></li><li><span>해산물 덮밥</span> <span>1,500엔</span></li><li><span>고등어 구이</span> <span>900엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.4</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"13번째 저의 마음속 1등 식당 이였습니다. 고등어가 비리지 않고 고소해요.\"\n        </div>\n    </div>\n    ",
-        "info": "11:00 - 22:00",
-        "transport": "Maizuru 1 Chome-2-11",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Hakata Gomasabaya",
-        "images": [
-            "https://images.unsplash.com/photo-1519985176271-adb1088fa94c?w=500&q=80",
-            "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80",
-            "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p7",
-        "area": "Tenjin (텐진)",
-        "type": "Motsunabe (모츠나베)",
-        "name": "원조 모츠나베 라쿠텐치 텐진본점",
-        "rating": "4.7 (18,802)",
-        "desc": "일식 내장 냄비 요리 전문점. 산더미 부추가 시그니처.",
-        "menu": "<ul class='menu-list'><li><span>모츠나베 (1인)</span> <span>1,260엔</span></li><li><span>짬뽕면</span> <span>300엔</span></li><li><span>두부</span> <span>250엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.7</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"음식도 너무너무 좋고 직원분들도 너무너무 친절합니당!!!\"\n        </div>\n    </div>\n    ",
-        "info": "11:00 - 24:00",
-        "transport": "Tenjin 1 Chome-1-1",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Rakutenchi Tenjin",
-        "images": [
-            "https://images.unsplash.com/photo-1542359553-66256f68c871?w=500&q=80",
-            "https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=500&q=80",
-            "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p8",
-        "area": "Daimyo (다이묘)",
-        "type": "Seafood (해산물)",
-        "name": "치카에",
-        "rating": "4.3 (3,523)",
-        "desc": "수조가 있는 대형 해산물 요리점. 명란 튜브가 유명.",
-        "menu": "<ul class='menu-list'><li><span>치카에 정식 (점심)</span> <span>2,000엔</span></li><li><span>활어회 정식</span> <span>3,500엔</span></li><li><span>명란 튜브</span> <span>800엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.3</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"식비는 2,000엔/1인당 주말점심한정. 분위기가 고급스럽고 맛도 깔끔합니다.\"\n        </div>\n    </div>\n    ",
-        "info": "17:00 - 22:00",
-        "transport": "2 Chome-2-17 Daimyo",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Chikae Fukuoka",
-        "images": [
-            "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80",
-            "https://images.unsplash.com/photo-1519985176271-adb1088fa94c?w=500&q=80",
-            "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p9",
-        "area": "Hakata (하카타)",
-        "type": "Udon (우동)",
-        "name": "다이치노 우동",
-        "rating": "4.2 (3,944)",
-        "desc": "투명하고 쫄깃한 면발이 특징인 우동 맛집. 우엉 튀김이 거대함.",
-        "menu": "<ul class='menu-list'><li><span>고기 우엉 튀김 우동</span> <span>780엔</span></li><li><span>야채 튀김 우동</span> <span>680엔</span></li><li><span>붓카케 우동</span> <span>700엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.2</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"메뉴도 그림이랑 한국어로 되어있어 자판기에서 편하게 주문 했음.\"\n        </div>\n    </div>\n    ",
-        "info": "10:00 - 21:00",
-        "transport": "Hakata Ekimae 2 Chome-1-1",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Daichino Udon Hakata",
-        "images": [
-            "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&q=80",
-            "https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=500&q=80",
-            "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p10",
-        "area": "Haruyoshi (하루요시)",
-        "type": "Izakaya (이자카야)",
-        "name": "히토쿠치 교자 타케토라",
-        "rating": "4.8 (2,776)",
-        "desc": "한입 교자가 맛있는 이자카야. 2차로 가기 좋은 곳.",
-        "menu": "<ul class='menu-list'><li><span>한입 교자 (10개)</span> <span>500엔</span></li><li><span>생맥주</span> <span>550엔</span></li><li><span>오이 무침</span> <span>350엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.8</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"밤에 손님들이 많았고, 주문한 메뉴들은 모두 무난했습니다.\"\n        </div>\n    </div>\n    ",
-        "info": "17:00 - 03:00",
-        "transport": "3 Chome-26-27 Haruyoshi",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Hitokuchi Gyoza Taketora",
-        "images": [
-            "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&q=80",
-            "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&q=80",
-            "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p11",
-        "area": "Sumiyoshi (스미요시)",
-        "type": "Yakitori (야키토리)",
-        "name": "야키토리 하레루야",
-        "rating": "4.9 (460)",
-        "desc": "현지인들이 찾는 숨은 야키토리 맛집. 꼬치 하나하나 정성스럽게 구워줌.",
-        "menu": "<ul class='menu-list'><li><span>꼬치 5종 세트</span> <span>1,000엔</span></li><li><span>삼겹살 꼬치</span> <span>180엔</span></li><li><span>닭껍질</span> <span>150엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.9</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"4박 5일 여행 중 저와 남편의 단연 1등 맛집! 사장님이 정말 친절하세요.\"\n        </div>\n    </div>\n    ",
-        "info": "17:30 - 24:00",
-        "transport": "2 Chome-15-1 Sumiyoshi",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Yakitori Hareruya Fukuoka",
-        "images": [
-            "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&q=80",
-            "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&q=80",
-            "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p12",
-        "area": "Nakasu (나카스)",
-        "type": "Eel (장어)",
-        "name": "요시즈카 우나기야",
-        "rating": "4.4 (8,697)",
-        "desc": "150년 전통의 장어 덮밥 전문점. 후쿠오카 최고의 장어 맛집.",
-        "menu": "<ul class='menu-list'><li><span>우나쥬 (4조각)</span> <span>3,500엔</span></li><li><span>우나쥬 (6조각)</span> <span>4,800엔</span></li><li><span>장어 계란말이</span> <span>800엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.4</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"밥한끼 35000원이지만 비싼만큼 맛은 있어요. 부모님 모시고 가기 좋습니다.\"\n        </div>\n    </div>\n    ",
-        "info": "10:00 - 21:00",
-        "transport": "2 Chome-8-27 Nakasu",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Yoshizuka Unagiya",
-        "images": [
-            "https://images.unsplash.com/photo-1519985176271-adb1088fa94c?w=500&q=80",
-            "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80",
-            "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p13",
-        "area": "Daimyo (다이묘)",
-        "type": "Tonkatsu (돈카츠)",
-        "name": "쿠로부타 돈카츠 쿠로마츠",
-        "rating": "4.5 (723)",
-        "desc": "흑돼지 돈카츠 전문점. 두툼한 고기와 바삭한 튀김옷.",
-        "menu": "<ul class='menu-list'><li><span>로스 카츠 정식</span> <span>1,800엔</span></li><li><span>히레 카츠 정식</span> <span>2,000엔</span></li><li><span>특상 로스 카츠</span> <span>2,400엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.5</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"음식은 한화 약 18,000원 정도인데 비싸지 않은 가격이다. 육즙이 살아있어요.\"\n        </div>\n    </div>\n    ",
-        "info": "11:00 - 21:00",
-        "transport": "2 Chome-1-38 Daimyo",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Kurobuta Tonkatsu Kuromatsu",
-        "images": [
-            "https://images.unsplash.com/photo-1553621042-f6e147245754?w=500&q=80",
-            "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=500&q=80",
-            "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p14",
-        "area": "Tenjin (텐진)",
-        "type": "Ramen (라멘)",
-        "name": "멘야 카네토라 텐진본점",
-        "rating": "4.3 (2,846)",
-        "desc": "진한 멸치 육수의 츠케멘 맛집. 매운맛 조절 가능.",
-        "menu": "<ul class='menu-list'><li><span>츠케멘</span> <span>1,000엔</span></li><li><span>매운 츠케멘</span> <span>1,100엔</span></li><li><span>토핑 전부 추가</span> <span>1,350엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.3</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"라면과 토핑을 파는 북적이는 바. 면발이 쫄깃하고 국물이 정말 진해요.\"\n        </div>\n    </div>\n    ",
-        "info": "10:30 - 22:30",
-        "transport": "Watanabedori 4 Chome-9-18",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Menya Kanetora Tenjin",
-        "images": [
-            "https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=500&q=80",
-            "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=80",
-            "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p15",
-        "area": "Watanabedori (와타나베도리)",
-        "type": "Rice Bowl (덮밥)",
-        "name": "부타 매니아동 이나다야 선",
-        "rating": "4.7 (543)",
-        "desc": "돼지고기 덮밥 전문점. 숯불 향 가득한 고기가 밥 위에 듬뿍.",
-        "menu": "<ul class='menu-list'><li><span>부타동 (보통)</span> <span>850엔</span></li><li><span>부타동 (대)</span> <span>1,000엔</span></li><li><span>계란 노른자 추가</span> <span>100엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.7</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"웨이팅 없고 점원이 친절함 오차즈케도 맛있다. 숨은 맛집 발견!\"\n        </div>\n    </div>\n    ",
-        "info": "11:00 - 21:00",
-        "transport": "Watanabedori 1 Chome-1-1",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Inadaya Sun Fukuoka",
-        "images": [
-            "https://images.unsplash.com/photo-1553621042-f6e147245754?w=500&q=80",
-            "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=500&q=80",
-            "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p16",
-        "area": "Imaizumi (이마이즈미)",
-        "type": "Motsunabe (모츠나베)",
-        "name": "모츠나베 라쿠텐치 이마이즈미 총본점",
-        "rating": "4.8 (17,256)",
-        "desc": "라쿠텐치의 또 다른 본점. 넓은 좌석과 변함없는 맛.",
-        "menu": "<ul class='menu-list'><li><span>모츠나베</span> <span>1,260엔</span></li><li><span>짬뽕면</span> <span>300엔</span></li><li><span>두부</span> <span>250엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.8</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"느끼할까봐 걱정했는데 하나도 안느끼고 너무 맛있었습니다. 부추가 신의 한 수.\"\n        </div>\n    </div>\n    ",
-        "info": "17:00 - 24:00",
-        "transport": "Imaizumi 1 Chome-19-18",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Rakutenchi Imaizumi",
-        "images": [
-            "https://images.unsplash.com/photo-1542359553-66256f68c871?w=500&q=80",
-            "https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=500&q=80",
-            "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p17",
-        "area": "Hakata (하카타)",
-        "type": "Steak (스테이크)",
-        "name": "키와미야 함바그 하카타점",
-        "rating": "4.2 (2,938)",
-        "desc": "하카타역 바로 옆에 위치한 키와미야. 접근성이 좋아 항상 줄이 깁니다.",
-        "menu": "<ul class='menu-list'><li><span>함바그 S</span> <span>1,298엔</span></li><li><span>함바그 M</span> <span>1,628엔</span></li><li><span>세트</span> <span>+440엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.2</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"역시 맛집이라 30분 이상의 웨이팅은 기본이더라구요. 기다린 보람이 있는 맛.\"\n        </div>\n    </div>\n    ",
-        "info": "11:00 - 22:00",
-        "transport": "Hakataekichuogai 2-1",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Kiwamiya Hakata",
-        "images": [
-            "https://images.unsplash.com/photo-1553621042-f6e147245754?w=500&q=80",
-            "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=500&q=80",
-            "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p18",
-        "area": "Higashihirao (히가시히라오)",
-        "type": "Tempura (튀김)",
-        "name": "텐푸라 히라오 본점",
-        "rating": "4.4 (6,679)",
-        "desc": "갓 튀긴 튀김을 하나씩 가져다주는 후쿠오카 스타일 덴푸라.",
-        "menu": "<ul class='menu-list'><li><span>기본 정식</span> <span>890엔</span></li><li><span>아지와이 정식</span> <span>990엔</span></li><li><span>오징어 젓갈</span> <span>무료</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.4</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"2번은 가세요 가성비 맛집. 오징어 젓갈이 정말 맛있어서 밥도둑입니다.\"\n        </div>\n    </div>\n    ",
-        "info": "10:30 - 21:00",
-        "transport": "2 Chome-4-1 Higashihirao",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Tempura Hirao Main Store",
-        "images": [
-            "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&q=80",
-            "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&q=80",
-            "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p19",
-        "area": "Hakata (하카타)",
-        "type": "Udon (우동)",
-        "name": "하가쿠레 우동",
-        "rating": "4.4 (2,508)",
-        "desc": "미슐랭 빕구르망에 선정된 우동 맛집. 부드러운 면발이 특징.",
-        "menu": "<ul class='menu-list'><li><span>고기 우엉 우동</span> <span>650엔</span></li><li><span>새우 튀김 우동</span> <span>600엔</span></li><li><span>유부 초밥</span> <span>200엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.4</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"다카마쓰 처럼 쫀득한 우동과 다릅니다. 부들부들해서 술술 넘어가요.\"\n        </div>\n    </div>\n    ",
-        "info": "11:00 - 21:00",
-        "transport": "2 Chome-3-32 Hakataekiminami",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Hagakure Udon",
-        "images": [
-            "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&q=80",
-            "https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?w=500&q=80",
-            "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p20",
-        "area": "Nakasu (나카스)",
-        "type": "Steak (스테이크)",
-        "name": "미야치쿠 스테이크",
-        "rating": "4.5 (717)",
-        "desc": "고급 미야자키규를 철판에서 구워주는 스테이크 하우스.",
-        "menu": "<ul class='menu-list'><li><span>런치 코스</span> <span>4,500엔</span></li><li><span>디너 코스</span> <span>10,000엔</span></li><li><span>안심 스테이크</span> <span>8,000엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.5</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"2인 기준 한화 52만원 정도를 썼음. 특별한 날 가기 좋은 최고의 서비스.\"\n        </div>\n    </div>\n    ",
-        "info": "11:00 - 22:00",
-        "transport": "Nakasu 5 Chome-2-1",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Miyachiku Steak Fukuoka",
-        "images": [
-            "https://images.unsplash.com/photo-1553621042-f6e147245754?w=500&q=80",
-            "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=500&q=80",
-            "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p21",
-        "area": "Tenjin (텐진)",
-        "type": "Shopping (쇼핑)",
-        "name": "돈키호테 텐진 본점",
-        "rating": "3.9 (12,000+)",
-        "desc": "24시간 영업하는 대형 디스카운트 스토어. 의약품, 화장품, 간식 등 없는 게 없습니다.",
-        "menu": "<ul class='menu-list'><li><span>동전 파스</span> <span>600엔</span></li><li><span>휴족시간</span> <span>500엔</span></li><li><span>퍼펙트 휩</span> <span>400엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">3.9</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"지하 1층부터 5층까지 물건이 정말 많습니다. 텍스 리펀 줄이 기니까 여유 있게 가세요.\"\n        </div>\n    </div>\n    ",
-        "info": "24시간 영업",
-        "transport": "텐진역 도보 5분",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Don Quijote Tenjin",
-        "images": [
-            "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=500&q=80",
-            "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p22",
-        "area": "Nakasu (나카스)",
-        "type": "Shopping (쇼핑)",
-        "name": "돈키호테 나카스점",
-        "rating": "3.8 (9,500+)",
-        "desc": "나카스 강변에 위치한 돈키호테. 1층과 2층으로 구성되어 쇼핑하기 편리합니다.",
-        "menu": "<ul class='menu-list'><li><span>이치란 라멘 키트</span> <span>2,000엔</span></li><li><span>킷캣 녹차맛</span> <span>300엔</span></li><li><span>산토리 위스키</span> <span>1,500엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">3.8</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"텐진점보다 통로가 넓어서 쇼핑하기 쾌적합니다. 새벽에 가서 여유롭게 쇼핑했어요.\"\n        </div>\n    </div>\n    ",
-        "info": "24시간 영업",
-        "transport": "나카스카와바타역",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Don Quijote Nakasu",
-        "images": [
-            "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=500&q=80",
-            "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p23",
-        "area": "Tenjin (텐진)",
-        "type": "Drugstore (드럭스토어)",
-        "name": "마츠모토 키요시 텐진점",
-        "rating": "4.0 (500+)",
-        "desc": "일본 최대 드럭스토어 체인. 화장품과 의약품 종류가 다양합니다.",
-        "menu": "<ul class='menu-list'><li><span>샤론 파스</span> <span>900엔</span></li><li><span>이브 진통제</span> <span>700엔</span></li><li><span>하다라보 고쿠쥰</span> <span>800엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.0</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"돈키호테보다 화장품 종류가 더 많은 것 같아요. 쿠폰 쓰면 더 저렴하게 살 수 있습니다.\"\n        </div>\n    </div>\n    ",
-        "info": "09:00 - 23:00",
-        "transport": "텐진 지하상가",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Matsumoto Kiyoshi Tenjin",
-        "images": [
-            "https://images.unsplash.com/photo-1519671482538-518b76064044?w=500&q=80",
-            "https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p24",
-        "area": "Ohori (오호리)",
-        "type": "Sight (관광)",
-        "name": "오호리 공원",
-        "rating": "4.5 (10,000+)",
-        "desc": "후쿠오카 시민들의 휴식처. 큰 호수를 따라 산책하기 좋습니다.",
-        "menu": "<ul class='menu-list'><li><span>입장료</span> <span>무료</span></li><li><span>오리배(30분)</span> <span>1,000엔</span></li><li><span>스타벅스 커피</span> <span>500엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.5</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"호수 보면서 멍 때리기 좋아요. 스타벅스 뷰가 예술입니다. 아침 산책 코스로 추천!\"\n        </div>\n    </div>\n    ",
-        "info": "24시간 개방",
-        "transport": "오호리공원역",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Ohori Park",
-        "images": [
-            "https://images.unsplash.com/photo-1570176560374-27c720de30bf?w=500&q=80",
-            "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p25",
-        "area": "Momochi (모모치)",
-        "type": "Sight (관광)",
-        "name": "후쿠오카 타워",
-        "rating": "4.3 (8,000+)",
-        "desc": "후쿠오카의 랜드마크. 전망대에서 보는 야경이 아름답습니다.",
-        "menu": "<ul class='menu-list'><li><span>전망대 입장권</span> <span>800엔</span></li><li><span>사랑의 자물쇠</span> <span>1,000엔</span></li><li><span>기념품</span> <span>500엔~</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.3</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"해 질 녘에 가서 야경까지 보고 오세요. 모모치 해변이랑 같이 묶어서 가면 좋습니다.\"\n        </div>\n    </div>\n    ",
-        "info": "09:30 - 22:00",
-        "transport": "니시진역 버스 15분",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Fukuoka Tower",
-        "images": [
-            "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=500&q=80",
-            "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=500&q=80"
-        ]
-    },
-    {
-        "id": "p26",
-        "area": "Momochi (모모치)",
-        "type": "Sight (관광)",
-        "name": "모모치 해변 공원",
-        "rating": "4.4 (5,500+)",
-        "desc": "이국적인 분위기의 인공 해변. 후쿠오카 타워 바로 앞.",
-        "menu": "<ul class='menu-list'><li><span>입장료</span> <span>무료</span></li><li><span>맥주</span> <span>600엔</span></li><li><span>아이스크림</span> <span>400엔</span></li></ul>",
-        "reviews": "\n    <div class=\"review-summary-card\">\n        <div class=\"review-score\">\n            <span class=\"score-num\">4.4</span>\n            <span class=\"score-stars\">⭐⭐⭐⭐⭐</span>\n        </div>\n        <div class=\"review-text\">\n            \"유럽 같은 건물이 있어서 사진 찍기 예뻐요. 바다 보면서 맥주 한잔하면 힐링 됩니다.\"\n        </div>\n    </div>\n    ",
-        "info": "24시간 개방",
-        "transport": "후쿠오카 타워 앞",
-        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Momochi Seaside Park",
-        "images": [
-            "https://images.unsplash.com/photo-1480796927426-f609979314bd?w=500&q=80",
-            "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=500&q=80"
-        ]
-    }
-];
-        const scheduleData = {
-            day1: [
-                { time: "10:00", title: "후쿠오카 공항 도착", desc: "지하철로 텐진 이동 (약 15분)" },
-                { time: "11:30", title: "점심: 신신 라멘", desc: "텐진 본점에서 돈코츠 라멘 즐기기" },
-                { time: "13:00", title: "다이묘 거리 쇼핑", desc: "슈프림, 스투시, 빈티지 샵 구경" },
-                { time: "15:00", title: "카페 델 솔", desc: "폭신한 팬케이크로 당 충전" },
-                { time: "17:00", title: "오호리 공원", desc: "호수 산책 및 일몰 감상" },
-                { time: "19:00", title: "저녁: 모츠나베 라쿠텐치", desc: "부추 가득한 곱창전골" },
-                { time: "21:00", title: "돈키호테 텐진", desc: "면세 쇼핑으로 하루 마무리" }
-            ],
-            day2: [
-                { time: "08:30", title: "하카타역 집결", desc: "유후인행 버스 탑승" },
-                { time: "10:30", title: "유후인 도착", desc: "유노츠보 거리 구경 및 간식" },
-                { time: "12:00", title: "점심: 유후마부시 신", desc: "장어덮밥 또는 소고기덮밥" },
-                { time: "13:30", title: "긴린코 호수", desc: "신비로운 호수 산책" },
-                { time: "15:00", title: "온천 체험", desc: "무소엔 또는 바이엔 당일 온천" },
-                { time: "17:00", title: "하카타로 복귀", desc: "버스 안에서 휴식" },
-                { time: "19:00", title: "저녁: 하카타 잇소우", desc: "진한 돈코츠 라멘" }
-            ],
-            day3: [
-                { time: "10:00", title: "스미요시 신사", desc: "아침 산책 및 참배" },
-                { time: "11:30", title: "점심: 우동 타이라", desc: "우엉 튀김 우동 맛보기" },
-                { time: "13:00", title: "캐널시티 하카타", desc: "분수쇼 관람 및 쇼핑" },
-                { time: "15:00", title: "쿠시다 신사", desc: "명성황후 시해 칼 보관 장소" },
-                { time: "17:00", title: "나카스 강변 산책", desc: "노을 지는 강변 걷기" },
-                { time: "19:00", title: "저녁: 이치란 본점", desc: "돈코츠 라멘의 원조" },
-                { time: "21:00", title: "나카스 야타이", desc: "포장마차에서 꼬치에 맥주 한잔" }
-            ],
-            day4: [
-                { time: "09:00", title: "조식: 탄야 하카타", desc: "우설 정식으로 든든하게" },
-                { time: "10:30", title: "아뮤 플라자 쇼핑", desc: "마지막 기념품 구매 (손수건 등)" },
-                { time: "12:00", title: "점심: 하카타역 도시락", desc: "에키벤 구매하여 공항으로" },
-                { time: "13:30", title: "후쿠오카 공항 이동", desc: "출국 수속 및 면세점 구경" }
-            ]
-        };
-
-        function renderPlaces(filter) {
-            const grid = document.getElementById('places-grid');
-            grid.innerHTML = '';
-            let filtered = places;
-            if (filter === 'Food') filtered = places.filter(p => p.type.includes('맛집') || p.type.includes('グルメ'));
-            else if (filter === 'Cafe') filtered = places.filter(p => p.type.includes('카페'));
-            else if (filter === 'Shopping') filtered = places.filter(p => p.type.includes('쇼핑'));
-            else if (filter === 'Sight') filtered = places.filter(p => p.type.includes('관광'));
-
-            filtered.forEach(place => {
-                const card = document.createElement('div');
-                card.className = 'place-card';
-                card.onclick = () => openModal(place.id);
-                card.innerHTML = `
-                    <div class="place-image-container">
-                        <img src="${place.images[0]}" class="place-image" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=500&q=80';">
-                        <div class="place-badge">${place.rating.split(' ')[0]}</div>
-                    </div>
-                    <div class="place-info">
-                        <div class="place-name">${place.name}</div>
-                        <div class="place-meta">
-                            <span>${place.type.split(' ')[0]}</span> • <span>${place.area.split(' ')[0]}</span>
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('city-grid');
+            
+            // Render Cities from DESTINATIONS
+            // DESTINATIONS is loaded from destinations.js global var
+            let delay = 0;
+            
+            for (const [country, cities] of Object.entries(DESTINATIONS)) {
+                cities.forEach(cityFull => {
+                    const cityName = cityFull.split('(')[0].trim();
+                     // lowercase with underscores for data loading (e.g. osaka)
+                    const cityCode = cityName.toLowerCase().replace(/\s+/g, '_');
+                    
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.style.cursor = 'pointer';
+                    // Random unsplash image for the city
+                    const imgUrl = `https://source.unsplash.com/600x400/?${cityName},travel`;
+                    
+                    card.innerHTML = `
+                        <img src="${imgUrl}" class="card-image" alt="${cityName}">
+                        <div class="card-content">
+                            <div class="card-meta">
+                                <span>${country}</span>
+                            </div>
+                            <h3 class="card-title">${cityFull}</h3>
+                            <div style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">
+                                Explore curated guide &rarr;
+                            </div>
                         </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function switchTab(key, btn) {
-            // Reset UI
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            btn.classList.add('active');
-            
-            // Show Home, Hide Schedule
-            document.getElementById('view-home').style.display = 'block';
-            document.getElementById('view-schedule').style.display = 'none';
-            
-            renderPlaces(key);
-            window.scrollTo(0,0);
-        }
-
-        function toggleSchedule(btn) {
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            btn.classList.add('active');
-
-            document.getElementById('view-home').style.display = 'none';
-            document.getElementById('view-schedule').style.display = 'block';
-            
-            showDay('day1', document.querySelector('.day-tab')); // Default to Day 1
-            window.scrollTo(0,0);
-        }
-
-        function showDay(dayKey, btn) {
-            document.querySelectorAll('.day-tab').forEach(el => el.classList.remove('active'));
-            btn.classList.add('active');
-
-            const container = document.getElementById('schedule-content');
-            const items = scheduleData[dayKey];
-            let html = '';
-            items.forEach(item => {
-                html += `
-                    <div class="timeline-item">
-                        <div class="time">${item.time}</div>
-                        <div class="event-title">${item.title}</div>
-                        <div class="event-desc">${item.desc}</div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        function openModal(id) {
-            const place = places.find(p => p.id === id);
-            if(!place) return;
-            
-            document.getElementById('modal-img').src = place.images[0];
-            document.getElementById('modal-title').innerText = place.name;
-            document.getElementById('modal-type').innerText = place.type;
-            document.getElementById('modal-area').innerText = place.area;
-            document.getElementById('modal-desc').innerText = place.desc;
-            document.getElementById('modal-menu').innerHTML = place.menu;
-            document.getElementById('modal-reviews').innerHTML = place.reviews;
-            document.getElementById('modal-map-btn').href = place.mapUrl;
-
-            // Gallery Logic
-            const gallerySection = document.getElementById('gallery-section');
-            const galleryContainer = document.getElementById('modal-gallery');
-            
-            if (place.images && place.images.length > 1) {
-                gallerySection.style.display = 'block';
-                let galleryHtml = '';
-                for (let i = 0; i < place.images.length; i++) {
-                    const imgUrl = place.images[i];
-                    galleryHtml += '<img src="' + imgUrl + '" loading="lazy" onclick="document.getElementById(\'modal-img\').src=\'' + imgUrl + '\'">';
-                }
-                galleryContainer.innerHTML = galleryHtml;
-            } else {
-                gallerySection.style.display = 'none';
-            }
-
-            document.getElementById('detailModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            history.pushState({modalOpen: true}, null, '');
-        }
-
-        function closeModal() {
-            document.getElementById('detailModal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-            if (history.state && history.state.modalOpen) history.back();
-        }
-
-        window.addEventListener('popstate', () => {
-            const modal = document.getElementById('detailModal');
-            if (modal.classList.contains('active')) {
-                modal.classList.remove('active');
-                document.body.style.overflow = 'auto';
+                    `;
+                    
+                    card.onclick = () => {
+                        window.location.href = `city.html?city=${cityCode}&name=${encodeURIComponent(cityFull)}`;
+                    };
+                    
+                    grid.appendChild(card);
+                });
             }
         });
-
-        // Init
-        renderPlaces('all');
     </script>
 </body>
 </html>
