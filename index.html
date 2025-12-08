@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE WORLD BUILDER | Cinematic Travel</title>
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
     <!-- Styles -->
     <link rel="stylesheet" href="./styles/hybrid.css">
 </head>
+
 <body>
 
     <!-- NAV -->
@@ -25,76 +29,177 @@
         </div>
     </nav>
 
-    <!-- HERO -->
+    <!-- HERO & PORTAL -->
     <section class="hero">
-        <video autoplay muted loop playsinline class="hero-video">
+        <div id="video-overlay"
+            style="position:absolute; top:0; left:0; width:100%; height:100%; background: #000; opacity: 0.4; z-index:0;">
+        </div>
+        <video id="bg-video" autoplay muted loop playsinline class="hero-video">
             <source src="https://videos.pexels.com/video-files/3205634/3205634-hd_1920_1080_25fps.mp4" type="video/mp4">
-            <!-- Fallback video -->
         </video>
+
         <div class="hero-content">
-            <div class="serif" style="color: var(--accent-color); margin-bottom: 20px;">The Art of Exploration</div>
-            <h1 class="hero-title">Discover the Extraordinary</h1>
-            <p class="hero-subtitle">Curated guides for the modern voyager. Built by AI, refined by design.</p>
+            <div class="serif" style="color: var(--accent-color); margin-bottom: 20px; letter-spacing: 2px;">THE WORLD
+                BUILDER</div>
+            <h1 class="hero-title">WHERE NEXT?</h1>
+
+            <!-- PORTAL UI -->
+            <div class="portal-container">
+                <input type="text" id="city-search" placeholder="Type a city (e.g. Osaka)..." autocomplete="off">
+                <div id="city-list" class="city-list">
+                    <!-- Cities will appear here -->
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- DESTINATIONS GRID -->
-    <section class="container" id="destinations">
-        <div class="section-title serif">Select Your Journey</div>
-        
-        <div class="grid" id="city-grid">
-            <!-- Cities will be injected here -->
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2025 World Builder using Gemini 2.0 Flash. All Rights Reserved.</p>
+    <!-- FOOTER -->
+    <footer style="position: absolute; bottom: 20px; width: 100%; z-index: 10;">
+        <p style="font-size: 0.8rem; opacity: 0.6;">&copy; 2025 World Builder. Designed for Immersion.</p>
     </footer>
 
     <!-- SCRIPTS -->
-    <script src="./destinations.js"></script> <!-- Defines DESTINATIONS const -->
+    <script src="./destinations.js"></script>
     <script src="./scripts/ui_core.js"></script>
+    <style>
+        /* Portal Specific Styles */
+        .portal-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        #city-search {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            color: #fff;
+            padding: 10px 0;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #city-search:focus {
+            border-bottom-color: var(--accent-color);
+        }
+
+        #city-search::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .city-list {
+            margin-top: 20px;
+            max-height: 40vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .city-item {
+            font-family: var(--font-sans);
+            font-size: 1.2rem;
+            opacity: 0.5;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .city-item:hover,
+        .city-item.active {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.1);
+            padding-left: 20px;
+        }
+
+        .city-item span {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+        }
+
+        /* Hide scrollbar */
+        .city-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .city-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .city-list::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+        }
+    </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const grid = document.getElementById('city-grid');
-            
-            // Render Cities from DESTINATIONS
-            // DESTINATIONS is loaded from destinations.js global var
-            let delay = 0;
-            
+            const searchInput = document.getElementById('city-search');
+            const cityList = document.getElementById('city-list');
+            const bgVideo = document.getElementById('bg-video');
+
+            // 1. Flatten Data
+            const allCities = [];
             for (const [country, cities] of Object.entries(DESTINATIONS)) {
-                cities.forEach(cityFull => {
-                    const cityName = cityFull.split('(')[0].trim();
-                     // lowercase with underscores for data loading (e.g. osaka)
-                    const cityCode = cityName.toLowerCase().replace(/\s+/g, '_');
-                    
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.style.cursor = 'pointer';
-                    // Random unsplash image for the city
-                    const imgUrl = `https://source.unsplash.com/600x400/?${cityName},travel`;
-                    
-                    card.innerHTML = `
-                        <img src="${imgUrl}" class="card-image" alt="${cityName}">
-                        <div class="card-content">
-                            <div class="card-meta">
-                                <span>${country}</span>
-                            </div>
-                            <h3 class="card-title">${cityFull}</h3>
-                            <div style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">
-                                Explore curated guide &rarr;
-                            </div>
-                        </div>
-                    `;
-                    
-                    card.onclick = () => {
-                        window.location.href = `city.html?city=${cityCode}&name=${encodeURIComponent(cityFull)}`;
-                    };
-                    
-                    grid.appendChild(card);
+                cities.forEach(c => {
+                    const name = c.split('(')[0].trim();
+                    const code = name.toLowerCase().replace(/\s+/g, '_');
+                    allCities.push({ full: c, name: name, code: code, country: country });
                 });
             }
+
+            // 2. Render List Function
+            const renderList = (filter = "") => {
+                cityList.innerHTML = '';
+                const filtered = allCities.filter(c => c.full.toLowerCase().includes(filter.toLowerCase()));
+
+                filtered.forEach(city => {
+                    const item = document.createElement('div');
+                    item.className = 'city-item';
+                    item.innerHTML = `
+                        ${city.full} 
+                        <span>${city.country} &rarr;</span>
+                    `;
+
+                    // Interaction: Hover changes background (Simulated vibe)
+                    item.onmouseenter = () => {
+                        // Ideally, we swap the video source here if we had city-specific videos.
+                        // For now, we interact by highlighting.
+                        // Advanced: We could fetch a static Unsplash BG for immediate feedback
+                        // bgVideo.poster = ...
+                    };
+
+                    item.onclick = () => {
+                        // "Warp Speed" transition effect before navigating
+                        document.body.style.transition = "opacity 0.5s";
+                        document.body.style.opacity = "0";
+                        setTimeout(() => {
+                            window.location.href = `city.html?city=${city.code}&name=${encodeURIComponent(city.full)}`;
+                        }, 500);
+                    };
+
+                    cityList.appendChild(item);
+                });
+            };
+
+            // 3. Init
+            renderList();
+
+            // 4. Search Handler
+            searchInput.addEventListener('input', (e) => {
+                renderList(e.target.value);
+            });
+
+            // 5. Focus Input on Load usually is good for "Portal" feel
+            searchInput.focus();
         });
     </script>
 </body>
+
 </html>
