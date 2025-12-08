@@ -1,0 +1,5 @@
+{
+  "name": "여행수집가",
+  "description": "A tool to collect travel data (Restaurants, Cafes, Shopping, Sightseeing) from Google Maps via Gemini, formatted into JSON.",
+  "requestFramePermissions": []
+}
